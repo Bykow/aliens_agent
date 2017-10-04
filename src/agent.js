@@ -75,6 +75,14 @@ class Agent {
       });
     });
   }
+
+  postData(postURL) {
+      const numberOfRepo = 30;
+      const numberOfFollower = 3500;
+      this.findHireableUsers(numberOfRepo, numberOfFollower, (userDetails) => {
+
+      });
+  }
 }
 
 
