@@ -83,7 +83,7 @@ class Agent {
     const numberOfRepo = 30;
     const numberOfFollower = 3500;
     this.findHireableUsers(numberOfRepo, numberOfFollower, (hireableUsers) => {
-      const wstream = fs.createWriteStream('myOutput.json');
+      const wstream = fs.createWriteStream('hireableUsers.json');
       wstream.write(JSON.stringify(hireableUsers, null, 2));
 
       wstream.end();
