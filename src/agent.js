@@ -1,5 +1,8 @@
 const request = require('superagent');
 const Throttle = require('superagent-throttle');
+const fs = require('fs');
+const credentials = require('../github-credentials.json');
+
 
 class Agent {
   constructor(credentials) {
@@ -69,21 +72,25 @@ class Agent {
           }
 
           if (numberOfUserDetailsToFetch === 0) {
-            hireableUsersFound(userDetails);
+            hireableUsersFound(hireableUsers);
           }
         });
       });
     });
   }
 
-  postData(postURL) {
-      const numberOfRepo = 30;
-      const numberOfFollower = 3500;
-      this.findHireableUsers(numberOfRepo, numberOfFollower, (userDetails) => {
+  createFile() {
+    const numberOfRepo = 30;
+    const numberOfFollower = 3500;
+    this.findHireableUsers(numberOfRepo, numberOfFollower, (hireableUsers) => {
+      const wstream = fs.createWriteStream('myOutput.json');
+      wstream.write(JSON.stringify(hireableUsers, null, 2));
 
-      });
+      wstream.end();
+    });
   }
 }
 
-
 module.exports = Agent;
+
+new Agent(credentials).createFile();
