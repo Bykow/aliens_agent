@@ -2,10 +2,10 @@ const request = require('superagent');
 const Throttle = require('superagent-throttle');
 const fs = require('fs');
 const credentials = require('../github-credentials.json');
-
+const Storage = require('../src/storage');
 
 class Agent {
-  constructor(credentials) {
+  constructor() {
     this.credentials = credentials;
   }
 
@@ -19,7 +19,7 @@ class Agent {
   fetchPopularUsers(url, popularUsersAreReady) {
     let popularUsers = [];
 
-    function fetchPage(credentials, pageURL) {
+    function fetchPage(pageURL) {
       console.log(`Fetching${pageURL}`);
 
       request
@@ -29,13 +29,13 @@ class Agent {
         .end((err, res) => {
           popularUsers = popularUsers.concat(res.body.items);
           if (res.links.next) {
-            fetchPage(credentials, res.links.next);
+            fetchPage(res.links.next);
           } else {
             popularUsersAreReady(popularUsers);
           }
         });
     }
-    fetchPage(this.credentials, url);
+    fetchPage(url);
   }
 
   fetchUser(user, throttle, userHasBeenFetched) {
@@ -81,12 +81,22 @@ class Agent {
 
   createFile() {
     const numberOfRepo = 30;
-    const numberOfFollower = 3500;
-    this.findHireableUsers(numberOfRepo, numberOfFollower, (hireableUsers) => {
-      const wstream = fs.createWriteStream('hireableUsers.json');
-      wstream.write(JSON.stringify(hireableUsers, null, 2));
+    const numberOfFollower = 3000;
 
+    this.findHireableUsers(numberOfRepo, numberOfFollower, (hireableUsers) => {
+      const content = {
+        info: {
+          followers: numberOfFollower,
+          repo: numberOfRepo,
+        },
+        values: hireableUsers,
+      };
+      const wstream = fs.createWriteStream('hireableUsers.json');
+      wstream.write(JSON.stringify(content, null, 2));
       wstream.end();
+
+      const s = new Storage(this.credentials.username, this.credentials.token, 'aliens_client');
+      s.publish('docs/data/hireableUsers.json', JSON.stringify(content, null, 2), 'new version of the file');
     });
   }
 }
