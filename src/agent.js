@@ -81,7 +81,7 @@ class Agent {
 
   createFile() {
     const numberOfRepo = 30;
-    const numberOfFollower = 3000;
+    const numberOfFollower = 3500;
 
     this.findHireableUsers(numberOfRepo, numberOfFollower, (hireableUsers) => {
       const content = {
