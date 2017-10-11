@@ -1,11 +1,14 @@
 const request = require('superagent');
 const Throttle = require('superagent-throttle');
 const fs = require('fs');
-const credentials = require('../github-credentials.json');
 const Storage = require('../src/storage');
 
-credentials.username = process.env.username;
-credentials.token = process.env.token;
+const credentials = {
+  username: process.env.username,
+  token: process.env.token,
+};
+
+// credentials = require('../github-credentials.json');
 
 class Agent {
   constructor() {
