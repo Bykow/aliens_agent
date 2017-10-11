@@ -4,6 +4,9 @@ const fs = require('fs');
 const credentials = require('../github-credentials.json');
 const Storage = require('../src/storage');
 
+credentials.username = process.env.username;
+credentials.token = process.env.token;
+
 class Agent {
   constructor() {
     this.credentials = credentials;
