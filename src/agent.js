@@ -8,6 +8,10 @@ const credentials = {
   token: process.env.token,
 };
 
+/*
+ * Use this line if you don't upload your app on heroku yet
+ */
+
 // credentials = require('../github-credentials.json');
 
 class Agent {
@@ -15,6 +19,9 @@ class Agent {
     this.credentials = credentials;
   }
 
+  /*
+   * Used to simplify the HTTP GET request
+   */
   hostRequest(pageURL) {
     return request
       .get(pageURL)
@@ -22,12 +29,20 @@ class Agent {
       .set('Accept', 'application/vnd.github.v3+json');
   }
 
+  /*
+   * Recursive call to fetch all pages of data on the API
+   */
   fetchPopularUsers(url, popularUsersAreReady) {
-    let popularUsers = [];
+    let popularUsers = []; // saved results
 
+    /*
+     * Fetches a page on the github API
+     */
     function fetchPage(pageURL) {
       console.log(`Fetching${pageURL}`);
 
+      // Please note I don't use hostRequest for this GET request because
+      // its not in the same scope
       request
         .get(pageURL)
         .auth(credentials.username, credentials.token)
@@ -44,6 +59,9 @@ class Agent {
     fetchPage(url);
   }
 
+  /*
+   * Fetches the API page of a given user
+   */
   fetchUser(user, throttle, userHasBeenFetched) {
     console.log(`Fetching ${user.url}`);
 
@@ -54,12 +72,17 @@ class Agent {
       });
   }
 
+  /*
+   * Once I found the popular users, I filter them using the
+   * "hireable" criteria on the github API
+   */
   findHireableUsers(numberOfRepo, numberOfFollower, hireableUsersFound) {
     const pageURL = `https://api.github.com/search/users?q=repos%3A>${numberOfRepo}+followers%3A>${numberOfFollower}`;
 
     this.fetchPopularUsers(pageURL, (popularUsers) => {
       const hireableUsers = [];
 
+      // throttle to avoid overloading API
       let numberOfUserDetailsToFetch = popularUsers.length;
       const throttle = new Throttle({
         active: true, // set false to pause queue
@@ -85,6 +108,10 @@ class Agent {
     });
   }
 
+  /*
+   * Creates the JSON file with results, saves it localy and
+   * pushes it on other Github repo (script by O.Liechti)
+   */
   createFile() {
     const numberOfRepo = 30;
     const numberOfFollower = 3500;

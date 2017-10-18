@@ -1,5 +1,8 @@
 const GitHubPublisher = require('github-publish');
 
+/*
+ * Storage class by O.Liechti
+ */
 class Storage {
   constructor(username, token, repo) {
     this.username = username;

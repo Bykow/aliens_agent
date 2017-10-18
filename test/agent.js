@@ -2,6 +2,7 @@ const chai = require('chai');
 const credentials = require('../github-credentials.json');
 const Agent = require('../src/agent.js');
 
+// Requiered for chai testing
 const should = chai.should();
 
 describe('Agent', () => {
