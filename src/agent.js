@@ -3,18 +3,16 @@ const Throttle = require('superagent-throttle');
 const fs = require('fs');
 const Storage = require('../src/storage');
 
-/*
 const credentials = {
   username: process.env.username,
   token: process.env.token,
 };
-*/
 
 /*
  * Use this line if you don't upload your app on heroku yet
  */
 
-const credentials = require('../github-credentials.json');
+//const credentials = require('../github-credentials.json');
 
 class Agent {
   constructor() {
